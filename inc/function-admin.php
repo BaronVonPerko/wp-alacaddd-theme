@@ -39,12 +39,14 @@ add_action('admin_menu', 'perko_add_admin_page');
 function perko_custom_settings() {
   register_setting('perko-settings-group', 'first_name');
   register_setting('perko-settings-group', 'last_name');
+  register_setting('perko-settings-group', 'bio');
   register_setting('perko-settings-group', 'twitter', 'perko_sanitize_twitter');
   register_setting('perko-settings-group', 'facebook');
 
   add_settings_section('perko-sidebar-options', 'Sidebar Options', 'perko_sidebar_options', 'perko_theme');
 
   add_settings_field('sidebar-name', 'Name', 'perko_sidebar_name', 'perko_theme', 'perko-sidebar-options');
+  add_settings_field('sidebar-bio', 'Bio', 'perko_sidebar_bio', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-twitter', 'Twitter', 'perko_sidebar_twitter', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-facebook', 'Facebook', 'perko_sidebar_facebook', 'perko_theme', 'perko-sidebar-options');
 }
@@ -58,6 +60,11 @@ function perko_sidebar_name() {
   $lastName = esc_attr(get_option('last_name'));
   echo '<input type="text" name="first_name" value="' . $firstName . '" placeholder="First Name" />';
   echo '<input type="text" name="last_name" value="' . $lastName . '" placeholder="Last Name" />';
+}
+
+function perko_sidebar_bio() {
+  $bio = esc_attr(get_option('bio'));
+  echo '<input class="regular-text" type="text" name="bio" value="' . $bio . '" placeholder="Short Bio" />';
 }
 
 function perko_sidebar_twitter() {
