@@ -35,7 +35,7 @@ add_action('admin_menu', 'perko_add_admin_page');
 
 
 function perko_theme_create_page() {
-  echo '<h1>Perko Theme Settings</h1>';
+  require_once(get_template_directory() . '/inc/templates/perko-admin.php');
 }
 
 function perko_theme_create_css_page() {
