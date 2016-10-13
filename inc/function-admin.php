@@ -37,6 +37,7 @@ function perko_add_admin_page() {
 add_action('admin_menu', 'perko_add_admin_page');
 
 function perko_custom_settings() {
+  register_setting('perko-settings-group', 'profile_picture');
   register_setting('perko-settings-group', 'first_name');
   register_setting('perko-settings-group', 'last_name');
   register_setting('perko-settings-group', 'bio');
@@ -45,6 +46,7 @@ function perko_custom_settings() {
 
   add_settings_section('perko-sidebar-options', 'Sidebar Options', 'perko_sidebar_options', 'perko_theme');
 
+  add_settings_field('sidebar-profile-picture', 'Profile Picture', 'perko_sidebar_profile', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-name', 'Name', 'perko_sidebar_name', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-bio', 'Bio', 'perko_sidebar_bio', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-twitter', 'Twitter', 'perko_sidebar_twitter', 'perko_theme', 'perko-sidebar-options');
@@ -53,6 +55,12 @@ function perko_custom_settings() {
 
 function perko_sidebar_options() {
   echo 'Customize your sidebar information';
+}
+
+function perko_sidebar_profile() {
+  $profilePicture = esc_attr(get_option('profile_picture'));
+  echo '<input type="button" value="Upload Profile Picture" id="btnUpload" class="button button-secondary" />';
+  echo '<input type="hidden" name="profile_picture" value="' . $profilePicture . '" id="profile-picture" />';
 }
 
 function perko_sidebar_name() {
