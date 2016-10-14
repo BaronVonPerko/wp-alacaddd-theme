@@ -44,16 +44,16 @@ function perko_custom_settings() {
 
 
   // Theme Support Options
-  register_setting('perko-theme-support', 'post_formats', 'perko_post_formats_callback');
+  register_setting('perko-theme-support', 'post_formats');
+  register_setting('perko-theme-support', 'custom_header');
+  register_setting('perko-theme-support', 'custom_background');
   add_settings_section('perko-theme-options', 'Theme Options', 'perko_theme_options_create', 'perko_theme_options');
   add_settings_field('post-formats', 'Post Formats', 'perko_post_formats', 'perko_theme_options', 'perko-theme-options');
+  add_settings_field('custom-header', 'Custom Header', 'perko_custom_header', 'perko_theme_options', 'perko-theme-options');
+  add_settings_field('custom-background', 'Custom Background', 'perko_custom_background', 'perko_theme_options', 'perko-theme-options');
 }
 
 // Callback Functions
-function perko_post_formats_callback($val) {
-  return $val;
-}
-
 function perko_sanitize_twitter($val) {
   $val = sanitize_text_field($val);
   $val = str_replace('@', '', $val);
@@ -68,8 +68,15 @@ function perko_sidebar_options() {
 
 function perko_sidebar_profile() {
   $profilePicture = esc_attr(get_option('profile_picture'));
-  echo '<input type="button" value="Upload Profile Picture" id="btnUpload" class="button button-secondary" />';
-  echo '<input type="hidden" name="profile_picture" value="' . $profilePicture . '" id="profile-picture" />';
+
+  if(empty($profilePicture)) {
+    echo '<input type="button" value="Upload Profile Picture" id="btnUpload" class="button button-secondary" />';
+    echo '<input type="hidden" name="profile_picture" value="" id="profile-picture" />';
+  } else {
+    echo '<input type="button" value="Replace Profile Picture" id="btnUpload" class="button button-secondary" />';
+    echo '<input type="button" class="button button-secondary" value="Remove" id="remove-picture" />';
+    echo '<input type="hidden" name="profile_picture" value="' . $profilePicture . '" id="profile-picture" />';
+  }
 }
 
 function perko_sidebar_name() {
@@ -109,6 +116,18 @@ function perko_post_formats() {
     $output .= '<label><input type="checkbox" id="'.$format.'" name="post_formats['.$format.']" value="1" '.$checked.' />'.$format.'</label><br/>';
   }
   echo $output;
+}
+
+function perko_custom_header() {
+  $option = get_option('custom_header');
+  $checked = ($option == 1 ? 'checked' : '');
+  echo '<label><input type="checkbox" id="custom_header" name="custom_header" value="1" '.$checked.'/>Activate Custom Header</label>';
+}
+
+function perko_custom_background() {
+  $option = get_option('custom_background');
+  $checked = ($option == 1 ? 'checked' : '');
+  echo '<label><input type="checkbox" id="custom_background" name="custom_background" value="1" '.$checked.'/>Activate Custom Background</label>';
 }
 
 
