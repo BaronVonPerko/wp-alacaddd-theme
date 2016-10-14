@@ -1,4 +1,4 @@
-<h1>Perko Theme Options</h1>
+<h1>Perko Sidebar Options</h1>
 
 <?php settings_errors(); ?>
 

@@ -17,19 +17,9 @@ function perko_add_admin_page() {
                 110);                           // location in menu
 
   // Generate Perko Theme Admin sub-pages
-  add_submenu_page('perko_theme',                 // parent slug
-                   'Perko Theme Options',         // name
-                   'Settings',                    // menu title
-                   'manage_options',              // permissions level
-                   'perko_theme',                 // subpage slug
-                   'perko_theme_create_page');    // function to generate the page
-
-  add_submenu_page('perko_theme',
-                   'Perko CSS Options',
-                   'CSS Options',
-                   'manage_options',
-                   'perko_theme_css',
-                   'perko_theme_create_css_page');
+  add_submenu_page('perko_theme', 'Perko Sidebar Options', 'Sidebar', 'manage_options', 'perko_theme', 'perko_theme_create_page');
+  add_submenu_page('perko_theme', 'Perko Theme Options', 'Theme Options', 'manage_options', 'perko_theme_options', 'perko_theme_create_options_page');
+  add_submenu_page('perko_theme', 'Perko CSS Options', 'CSS Options', 'manage_options', 'perko_theme_css', 'perko_theme_create_css_page');
 
   // Activate custom settings
   add_action('admin_init', 'perko_custom_settings');
@@ -51,8 +41,27 @@ function perko_custom_settings() {
   add_settings_field('sidebar-bio', 'Bio', 'perko_sidebar_bio', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-twitter', 'Twitter', 'perko_sidebar_twitter', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-facebook', 'Facebook', 'perko_sidebar_facebook', 'perko_theme', 'perko-sidebar-options');
+
+
+  // Theme Support Options
+  register_setting('perko-theme-support', 'post_formats', 'perko_post_formats_callback');
+  add_settings_section('perko-theme-options', 'Theme Options', 'perko_theme_options_create', 'perko_theme_options');
+  add_settings_field('post-formats', 'Post Formats', 'perko_post_formats', 'perko_theme_options', 'perko-theme-options');
 }
 
+// Callback Functions
+function perko_post_formats_callback($val) {
+  return $val;
+}
+
+function perko_sanitize_twitter($val) {
+  $val = sanitize_text_field($val);
+  $val = str_replace('@', '', $val);
+  return $val;
+}
+
+
+// Generate Sidebar
 function perko_sidebar_options() {
   echo 'Customize your sidebar information';
 }
@@ -86,15 +95,21 @@ function perko_sidebar_facebook() {
   echo '<input type="text" name="facebook" value="' . $facebook . '" placeholder="Facebook" />';
 }
 
-
-
-// Sanitization Settings
-function perko_sanitize_twitter($val) {
-  $val = sanitize_text_field($val);
-  $val = str_replace('@', '', $val);
-  return $val;
+// Generate for Theme Options
+function perko_theme_options_create() {
+  echo 'Activate and deactivate specific theme support options.';
 }
 
+function perko_post_formats() {
+  $options = get_option('post_formats');
+  $formats = array('aside', 'gallery', 'link', 'image', 'quote', 'status', 'video', 'audio', 'chat');
+  $output = '';
+  foreach($formats as $format) {
+    $checked = ($options[$format] == 1 ? 'checked' : '');
+    $output .= '<label><input type="checkbox" id="'.$format.'" name="post_formats['.$format.']" value="1" '.$checked.' />'.$format.'</label><br/>';
+  }
+  echo $output;
+}
 
 
 // Build Admin Sub Pages
@@ -104,4 +119,8 @@ function perko_theme_create_page() {
 
 function perko_theme_create_css_page() {
   echo '<h1>Perko Theme CSS Options</h1>';
+}
+
+function perko_theme_create_options_page() {
+  require_once(get_template_directory() . '/inc/templates/perko-theme-options.php');
 }
