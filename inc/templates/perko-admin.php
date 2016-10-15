@@ -29,5 +29,6 @@
 <form action="options.php" method="post" class="perko-general-form">
   <?php settings_fields('perko-settings-group'); ?>
   <?php do_settings_sections('perko_theme'); ?>
+  <?php do_settings_sections('perko_social'); ?>
   <?php submit_button('Save Changes', 'primary', 'btnSubmit'); ?>
 </form>

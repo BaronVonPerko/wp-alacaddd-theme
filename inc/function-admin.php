@@ -4,6 +4,9 @@
   ADMIN PAGE
 */
 
+require get_template_directory() . '/inc/function-admin-sidebar.php';
+require get_template_directory() . '/inc/function-admin-theme-options.php';
+
 
 function perko_add_admin_page() {
 
@@ -27,21 +30,26 @@ function perko_add_admin_page() {
 add_action('admin_menu', 'perko_add_admin_page');
 
 function perko_custom_settings() {
+  // Sidebar Options
   register_setting('perko-settings-group', 'profile_picture');
   register_setting('perko-settings-group', 'first_name');
   register_setting('perko-settings-group', 'last_name');
   register_setting('perko-settings-group', 'bio');
   register_setting('perko-settings-group', 'twitter', 'perko_sanitize_twitter');
   register_setting('perko-settings-group', 'facebook');
+  register_setting('perko-settings-group', 'google');
 
   add_settings_section('perko-sidebar-options', 'Sidebar Options', 'perko_sidebar_options', 'perko_theme');
 
   add_settings_field('sidebar-profile-picture', 'Profile Picture', 'perko_sidebar_profile', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-name', 'Name', 'perko_sidebar_name', 'perko_theme', 'perko-sidebar-options');
   add_settings_field('sidebar-bio', 'Bio', 'perko_sidebar_bio', 'perko_theme', 'perko-sidebar-options');
-  add_settings_field('sidebar-twitter', 'Twitter', 'perko_sidebar_twitter', 'perko_theme', 'perko-sidebar-options');
-  add_settings_field('sidebar-facebook', 'Facebook', 'perko_sidebar_facebook', 'perko_theme', 'perko-sidebar-options');
 
+  add_settings_section('perko-sidebar-social', 'Social Media', 'perko_sidebar_social', 'perko_social');
+
+  add_settings_field('sidebar-twitter', 'Twitter', 'perko_sidebar_twitter', 'perko_social', 'perko-sidebar-social');
+  add_settings_field('sidebar-facebook', 'Facebook', 'perko_sidebar_facebook', 'perko_social', 'perko-sidebar-social');
+  add_settings_field('sidebar-google', 'Google+', 'perko_sidebar_google', 'perko_social', 'perko-sidebar-social');
 
   // Theme Support Options
   register_setting('perko-theme-support', 'post_formats');
@@ -59,77 +67,6 @@ function perko_sanitize_twitter($val) {
   $val = str_replace('@', '', $val);
   return $val;
 }
-
-
-// Generate Sidebar
-function perko_sidebar_options() {
-  echo 'Customize your sidebar information';
-}
-
-function perko_sidebar_profile() {
-  $profilePicture = esc_attr(get_option('profile_picture'));
-
-  if(empty($profilePicture)) {
-    echo '<input type="button" value="Upload Profile Picture" id="btnUpload" class="button button-secondary" />';
-    echo '<input type="hidden" name="profile_picture" value="" id="profile-picture" />';
-  } else {
-    echo '<input type="button" value="Replace Profile Picture" id="btnUpload" class="button button-secondary" />';
-    echo '<input type="button" class="button button-secondary" value="Remove" id="remove-picture" />';
-    echo '<input type="hidden" name="profile_picture" value="' . $profilePicture . '" id="profile-picture" />';
-  }
-}
-
-function perko_sidebar_name() {
-  $firstName = esc_attr(get_option('first_name'));
-  $lastName = esc_attr(get_option('last_name'));
-  echo '<input type="text" name="first_name" value="' . $firstName . '" placeholder="First Name" />';
-  echo '<input type="text" name="last_name" value="' . $lastName . '" placeholder="Last Name" />';
-}
-
-function perko_sidebar_bio() {
-  $bio = esc_attr(get_option('bio'));
-  echo '<input class="regular-text" type="text" name="bio" value="' . $bio . '" placeholder="Short Bio" />';
-}
-
-function perko_sidebar_twitter() {
-  $twitter = esc_attr(get_option('twitter'));
-  echo '<input type="text" name="twitter" value="' . $twitter . '" placeholder="Twitter" />';
-  echo '<p class="description">Input your Twitter handle without the @ character.</p>';
-}
-
-function perko_sidebar_facebook() {
-  $facebook = esc_attr(get_option('facebook'));
-  echo '<input type="text" name="facebook" value="' . $facebook . '" placeholder="Facebook" />';
-}
-
-// Generate for Theme Options
-function perko_theme_options_create() {
-  echo 'Activate and deactivate specific theme support options.';
-}
-
-function perko_post_formats() {
-  $options = get_option('post_formats');
-  $formats = array('aside', 'gallery', 'link', 'image', 'quote', 'status', 'video', 'audio', 'chat');
-  $output = '';
-  foreach($formats as $format) {
-    $checked = ($options[$format] == 1 ? 'checked' : '');
-    $output .= '<label><input type="checkbox" id="'.$format.'" name="post_formats['.$format.']" value="1" '.$checked.' />'.$format.'</label><br/>';
-  }
-  echo $output;
-}
-
-function perko_custom_header() {
-  $option = get_option('custom_header');
-  $checked = ($option == 1 ? 'checked' : '');
-  echo '<label><input type="checkbox" id="custom_header" name="custom_header" value="1" '.$checked.'/>Activate Custom Header</label>';
-}
-
-function perko_custom_background() {
-  $option = get_option('custom_background');
-  $checked = ($option == 1 ? 'checked' : '');
-  echo '<label><input type="checkbox" id="custom_background" name="custom_background" value="1" '.$checked.'/>Activate Custom Background</label>';
-}
-
 
 // Build Admin Sub Pages
 function perko_theme_create_page() {
